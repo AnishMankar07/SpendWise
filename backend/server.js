@@ -17,7 +17,7 @@ const port = process.env.PORT || 4000;
 
 const allowedOrigins = [
     'http://localhost:5173',
-    'https://spend-wise-signm-two.vercel.app'
+    'https://spend-wise-sigma-two.vercel.app'
 ];
 
 app.use(cors({
