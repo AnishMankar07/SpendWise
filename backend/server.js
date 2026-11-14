@@ -1,3 +1,4 @@
+
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
@@ -8,34 +9,43 @@ import incomeRouter from './routes/incomeRoute.js';
 import expenseRouter from './routes/expenseRoute.js';
 import dashboardRouter from './routes/dashboardRoute.js';
 
-
-
-
 const app = express();
-const port = 4000;
 
+const port = process.env.PORT || 4000;
 
 // Middleware
-app.use(cors());
+const allowedOrigins = [
+    'http://localhost:5173',
+    'https://YOUR-VERCEL-DOMAIN.vercel.app'
+];
+
+app.use(cors({
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true
+}));
+
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
 
-
-
-//DB
+// Database
 connectDB();
 
 // Routes
-app.use("/api/user", userRouter);
-app.use("/api/income", incomeRouter);
-app.use("/api/expense", expenseRouter);
-app.use("/api/dashboard", dashboardRouter);
+app.use('/api/user', userRouter);
+app.use('/api/income', incomeRouter);
+app.use('/api/expense', expenseRouter);
+app.use('/api/dashboard', dashboardRouter);
 
+app.get('/', (req, res) => {
+    res.send('API working');
+});
 
-app.get('/',(req,res)=>{
-    res.send("API working ")
-})
-
-app.listen(port,()=>{
-    console.log(`Server started on http://localhost:${port}`);
-})
+app.listen(port, () => {
+    console.log(`Server started on port ${port}`);
+});
